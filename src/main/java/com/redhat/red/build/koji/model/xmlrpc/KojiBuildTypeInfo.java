@@ -30,6 +30,9 @@ public class KojiBuildTypeInfo
     @DataKey ("image")
     private KojiImageBuildInfo image;
 
+    @DataKey ("rpm")
+    private KojiRpmBuildInfo rpm;
+
     private String name;
 
     public KojiBuildTypeInfo()
@@ -59,7 +62,7 @@ public class KojiBuildTypeInfo
 
     public void setWin( KojiWinBuildInfo win )
     {
-        if ( this.maven != null || this.image != null )
+        if ( this.maven != null || this.image != null || this.rpm != null )
         {
             throw new IllegalArgumentException( "Type info already set" );
         }
@@ -75,12 +78,27 @@ public class KojiBuildTypeInfo
 
     public void setImage( KojiImageBuildInfo image )
     {
-        if ( this.maven != null || this.win != null )
+        if ( this.maven != null || this.win != null || this.rpm != null )
         {
             throw new IllegalArgumentException( "Type info already set" );
         }
         this.image = image;
         this.name = "image";
+    }
+
+    public KojiRpmBuildInfo getRpm()
+    {
+        return rpm;
+    }
+
+    public void setRpm( KojiRpmBuildInfo rpm )
+    {
+        if ( this.maven != null || this.win != null || this.image != null )
+        {
+            throw new IllegalArgumentException( "Type info already set" );
+        }
+        this.rpm = rpm;
+        this.name = "rpm";
     }
 
     public String getName()
@@ -150,11 +168,15 @@ public class KojiBuildTypeInfo
         {
             this.image = (KojiImageBuildInfo) buildInfo;
         }
+        else if (buildInfo instanceof KojiRpmBuildInfo )
+        {
+            this.rpm = (KojiRpmBuildInfo) buildInfo;
+        }
     }
 
     public Object getBuildInfo()
     {
-        return ( maven != null ? maven : ( win != null ? win : ( image != null ? image : null ) ) );
+        return ( maven != null ? maven : ( win != null ? win : ( image != null ? image : (rpm != null ? rpm : null ) ) ) );
     }
 
     @Override
